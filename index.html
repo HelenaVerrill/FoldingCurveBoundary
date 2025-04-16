@@ -1,0 +1,1991 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Boundary of fractal dragons">
+  <meta name="keywords" content="fractal, dragon, L-system, combinatorics, folding curve, space filling, boundary curve">
+  <meta name="author" content="Helena Verrill">
+ 
+
+<style>
+
+
+.container {
+    position: relative;
+}
+
+
+.containerA0 {
+    position: relative;
+    float: left;
+    width: 100%;
+}
+
+.containerB0 {
+    position: relative;
+    float: right;
+    width: 100%;
+}
+
+
+.containerA1 {
+    position: relative;
+    float: left;
+    width: 50%;
+}
+
+.containerB1 {
+    position: relative;
+    float: right;
+    width: 50%;
+}
+
+  
+body {
+  background:  #ffeecc;;
+  margin: 20;
+  padding: 2em;
+}
+
+canvas {
+  width: 100%;
+  height: auto;
+  display: block;
+  background:  #ffddd0;
+}
+
+a {
+    background: #69c;
+    color: #fff;
+    padding: 1px 1px;
+    border-radius: 5px;
+}
+
+button {
+    background: #69c;
+    color: #fff;
+    padding: 1px 1px;
+    border-radius: 5px;
+}
+
+.range-wrap {
+    position: relative;
+  margin: 0 auto 3rem;
+}
+
+
+.range {
+  width: 100%;
+}
+.bubble {
+  background: #69c;
+  color: white;
+  padding: 4px 12px;
+  position: absolute;
+  border-radius: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.bubble::after {
+  content: "";
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: #69c;
+  top: -1px;
+  left: 50%;
+}
+
+
+
+#overlay1 {
+    position: absolute;
+     width: 90%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    left: 5%;
+    top: 5%;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    text-align: left;
+    font-size: 100%;
+    outline: 2px solid white;
+  color: gray;
+  font-family: monospace;
+  padding: 0em;
+  z-index:5;
+}
+
+
+
+
+.controls {
+    position: relative;
+     width: 70%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    left: 5%;
+    top: 5%;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    text-align: left;
+    font-size: 100%;
+    outline: 2px solid white;
+  color: gray;
+  font-family: monospace;
+  padding: 0em;
+  z-index:5;
+}
+
+.controlsA {
+    position: relative;
+     width: 70%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    left: 5%;
+    top: 5%;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    text-align: left;
+    font-size: 100%;
+    outline: 2px solid white;
+  color: gray;
+  font-family: monospace;
+  padding: 0em;
+  z-index:5;
+}
+
+.controlsB {
+    position: relative;
+     width: 90%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    left: auto;
+    top: 5%;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    text-align: left;
+    font-size: 100%;
+    outline: 2px solid white;
+  color: gray;
+  font-family: monospace;
+  padding: 0em;
+  z-index:15;
+}
+
+
+.Notes {
+    position: relative;
+     width: 90%;
+    display: inline;
+    margin-left: auto;
+    margin-right: auto;
+    left: auto;
+    top: 5%;
+    background-color: rgba(250, 200, 200, 0);
+    border-radius: 5px;
+    text-align: left;
+    font-size: 100%;
+    outline: 2px solid white;
+  color: gray;
+  font-family: monospace;
+  padding: 0em;
+  z-index:-10;
+}
+
+.NotesA {
+    position: relative;
+     width: 90%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    left: auto;
+    top: 5%;
+    background-color: rgba(250, 200, 230, 0);
+    border-radius: 5px;
+    text-align: left;
+    font-size: 100%;
+    outline: 2px solid white;
+  color: gray;
+  font-family: monospace;
+  padding: 0em;
+  z-index:-4;
+}
+
+
+.tableA {
+    background-color: rgba(250, 240, 0, 1);
+    border-radius: 5px;
+    outline: 2px solid white;
+    color: gray;
+        margin-left: 5%;
+}
+
+
+.NotesB {
+    position: relative;
+     width: 90%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    left: auto;
+    top: auto;
+    background-color: rgba(255, 230, 220, 0.4);
+    border-radius: 5px;
+    text-align: left;
+    font-size: 100%;
+    outline: 2px solid white;
+  color: gray;
+  font-family: monospace;
+  padding: 0em;
+  z-index:-5;
+}
+
+
+</style>
+
+<title>Boundaries of Dragons</title>
+</head>
+  <body>
+
+    <h1>Boundaries of Dragons</h1>
+<h4>    <span id="ABseq"></span>    </h4>
+
+
+
+<div class="containerA0" id="side1">
+    
+	<svg version="1.1" id="curveandboundarypic"
+	     xmlns="http://www.w3.org/2000/svg"
+	     xmlns:xlink="http://www.w3.org/1999/xlink"
+	     x="0px" y="0px"	 width="100%" 
+	     viewBox="0 0 500 500" style="background: #032963"
+	     enable-background="new 0 0 500 500"
+	     xml:space="preserve">
+
+
+	  <g id="everything">
+	  <g id="everythingA">
+
+  <path id="grid" d="" stroke-width="0" fill="#444488"/>
+
+
+  <path id="boundaryFill" d=""
+                stroke-width="0" stroke-linecap="round" fill = "#bbbbff" stroke="white"/>
+
+  
+  <path id="boundaryT" d=""
+                stroke-width="8px" stroke-linecap="round" stroke = "#ffbbbb" fill = "none"/>
+
+  <path id="boundaryT2" d=""
+                stroke-width="8px" stroke-linecap="round" stroke = "#ffff99" fill = "none"/>
+
+
+  <path id="boundarycentral" d=""
+                stroke-width="0" stroke-linecap="square" fill = "none" stroke="black"/>
+
+    <path id="boundaryEdgeR" d=""
+                stroke-width="0.11" stroke-linecap="square" fill = "none" stroke="black"/>
+
+  
+
+</g>
+</g>
+
+	</svg>
+
+</div>
+
+<div class="containerB0" id="side2"> 
+  <div class="controlsA">
+    iteration level:
+  
+     <div class="range-wrap" style="width: 100px;">
+        <input    type="range" class="range" id="levelrange" min="0" max="4" value="2">
+           <output id = "N" class="bubble"></output>
+     </div>
+
+Align:
+<input type="radio" checked="true" name="RS" id="RS0" onclick="rescale(this.value)" value="0">   
+<input type="radio" name="RS" id="RS1" onclick="rescale(this.value)" value="1">   
+Layout:
+<input type="radio" name="LO" id="LO0" onclick="layout(this.value)" value="0">   
+<input type="radio" checked="true" name="LO" id="LO1" onclick="layout(this.value)" value="1">
+many/few/2:
+<input type="radio" checked="true" name="MF" id="MF0" onclick="manyfew(this.value)" value="0">   
+<input type="radio" name="MF" id="MF1" onclick="manyfew(this.value)" value="1">
+<input type="radio" name="MF" id="MF2" onclick="manyfew(this.value)" value="2">
+more options:
+<input type="radio" checked="true" name="more" id="more0" onclick="moreoptions(this.value)" value="0">   
+<input type="radio" name="more" id="more1" onclick="moreoptions(this.value)" value="1">
+
+
+<div id="extraoptions" style="display: none;">
+  checks:
+<input type="radio" checked="true" name="SC" id="SC0" onclick="showchecks(this.value)" value="0">   
+<input type="radio" name="SC" id="SC1" onclick="showchecks(this.value)" value="1">
+
+  colour:
+<input type="radio" name="C" id="C0" onclick="colourlines(this.value)" value="0">   
+<input type="radio" checked="true" name="C" id="C1" onclick="colourlines(this.value)" value="1">
+<input type="radio" name="C" id="C2" onclick="colourlines(this.value)" value="2">
+
+tiles:
+<input type="radio" checked="true" name="T" id="T0" onclick="colourtiles(this.value)" value="0">   
+<input type="radio"  name="T" id="T1" onclick="colourtiles(this.value)" value="1">
+<input type="radio"  name="T" id="T2" onclick="colourtiles(this.value)" value="2">   
+
+
+
+
+<div class="range-wrap">
+  <input   type="range" class="range" id="widthA" min="0" max="2000" value="200">
+	  <output id = "width A" class="bubble"></output>
+</div>
+
+<div class="range-wrap">
+  <input   type="range" class="range" id="widthB" min="0" max="2000" value="800">
+	  <output id = "width B" class="bubble"></output>
+</div>
+
+  </div>
+
+
+</div>
+<div class="controls">
+<div class="range-wrap">
+  <input   type="range" class="range" id="levelrange" min="1" max="400" value="100">
+	  <output id = "scale" class="bubble"></output>
+</div>
+</div>
+
+<div class="controlsB">
+<h4>Example space filling curve L-systems:</h4>
+<table id="exampletable">
+<tr><td>
+  <input type="radio" checked="true" name="LS" id="L0" onclick="changeLsystem(this.value)" value="0"> 
+</td>	<td id="LS0"></td></tr>
+</table>
+</div>
+</div>
+
+
+<div class="NotesA">
+
+
+<table  class="tableA">
+  <tr><th colspan="3">L-system for boundary</th></tr>
+<tr><td>R</td> <td>&#8614;</td> <td><span id="R"></span></td> </tr>
+<tr><td>r</td> <td>&#8614;</td> <td><span id="r"></span></td> </tr>
+<tr><td>L</td> <td>&#8614;</td> <td><span id="L"></span></td> </tr>
+<tr><td>l</td> <td>&#8614;</td> <td><span id="l"></span></td> </tr>
+<tr><td>S</td> <td>&#8614;</td> <td><span id="S"></span></td> </tr>
+<tr><td>s</td> <td>&#8614;</td> <td><span id="s"></span></td> </tr>
+</table>
+
+</div>
+
+
+<h4>Notes</h4>
+This is to demonstrate the boundary producing algorithm which I've written up here
+<a href="https://arxiv.org/abs/2402.16106">https://arxiv.org/abs/2402.16106</a>.
+<br>This is based on the space filling folding curves, with methods developed by Dekking and Arndt and Handl,
+who's notation this follows for the L-system of the space filling curve.
+See  
+<a href="https://arxiv.org/abs/1011.5788">(Dekking) https://arxiv.org/abs/1011.5788</a> and
+<a href="https://arxiv.org/abs/2312.00654">(Arndt and Handl) https://arxiv.org/abs/2312.00654</a>
+<p>
+My contribution is the boundary curve algorithm.
+<p>This program assumes that the input is a space filling square based folding curve, and does not
+  check whether the input satisfies this.
+  The input can either be the preset choices, or you can enter your own in the text field.  The input gives the value of the image of A under the L-system.  Since these are assumed folding curves, this determines the image of B.
+  Since A and B alternate, with + or - between, you only need to enter
+  A or B as the first element of this string, then + or - as the remaining elements.  If you enter anything else it will be ignored.
+  You can also use keys z and x to change curve.
+<p>
+This is an svg version.  My other space filling curve programs are mostly webgl based.
+The algorithms differ in that the svg algorithm produces the instructions for the whole curve, in a turtle geometry
+kind of way.
+The webgl program doesn't compute global paths, and works locally, so the instructions for a complete path
+are never needed.  Webgl is potentially faster and more flexible, but svg is interesting in that the path
+can be given in a vector type format.
+<p>Note: for a more continuous transformation, choose the Align
+  option, which rotates and scales to fix end points of successive iterations of the curve, so convergence
+  can be entertained.
+<p>Warning: may be slow for N=4 and long value of initial L-system.
+  Choose "few units" for less lag.
+Also: only tested on Chrome on a Mac.  Click the layout to change between layout more appropriate to
+  landscape or portrait format.
+<p>
+  This is related to sequences
+  <a href="https://oeis.org/A296148">A296148</a>
+  and <a href="https://oeis.org/A343990">A343990</a>
+  amongst others.
+<p>
+Helena Verrill
+<p>
+Warwick University
+
+
+
+
+
+
+
+<script>
+//  (need to fix bugs for non spacefilling cases)
+  
+var tiles=false
+    var origin = [250,250]
+//    origin = [125,300] // [125,250]
+var scale = 1
+    var sigA = 
+["A","-","B","-","A","+","B","-","A","+","B","+","A","+","B","-","A","-","B","+","A","-","B","-","A","-","B","+","A","+","B","-","A"]
+//["B","+","A","+","B","-","A","-","B","-","A","+","B","+","A","+","B","-","A"]
+//    var sigA  = 
+//["A","-","B","-","A","+","B","+","A"]
+//["B","+","A","-","B","-","A","+","B","+","A","+","B","-","A","+","B","+","A","-","B","-","A","-","B","+","A","-","B","+","A","+","B"]    
+
+//      var sigA  = ["A","-","B","-","A","-","B","-","A"]  
+    
+
+var sigAs =
+[
+["A","+","B","+","A","-","B","-","A"],
+["A","-","B","-","A","+","B","+","A","+","B","-","A","+","B","-","A"],
+["A","-","B","+","A","-","B","+","A","+","B","-","A","+","B","+","A"],
+["A","+","B","-","A","-","B","-","A","+","B","+","A","+","B","-","A","-","B","-","A","+","B","+","A"],
+["A","-","B","-","A","+","B","-","A","+","B","+","A","+","B","-","A","-","B","+","A","-","B","-","A","-","B","+","A","+","B","-","A"],
+["A","-","B","-","A","+","B","+","A","+","B","-","A","+","B","-","A","-","B"],
+["A","+","B"],
+["A","-","B"],
+["A","+","B","-","A","-","B"],
+//["A","+","B","-","A","+","B","-","A","-","B","-","A","+","B","+","A","-","B"]
+["A","+","B","-","A","-","B","+","A","+","B","-","A","-","B","-","A","+","B"],
+    ["A","+","B","-","A","-","B","+","A","+","B","+","A","-","B"],
+// following line is not for space filling curve
+    //    ["A","+","B","+","A","-","B","+","A","-","B","-","A","+","B"],
+["A","+","B","+","A","-","B","+","A","+","B","-","A","-","B"],    
+["B","+","A","+","B","-","A","-","B","-","A","+","B","+","A"],
+["B","+","A","-","B","-","A","+","B","+","A","+","B","-","A"],
+["B","-","A","+","B","+","A","+","B","-","A","-","B","+","A"],
+["B","+","A","+","B","-","A","-","B","-","A","+","B","+","A","-","B","-","A","-","B","+","A","+","B","+","A","-","B","+","A","+","B","-","A"],
+["B","+","A","+","B","-","A","-","B"],
+["B","+","A","+","B","-","A","-","B","-","A","+","B","+","A","+","B","-","A"],
+//["B","+","A","+","B","-","A","+","B","-","A","-","B","-","A","+","B","-","A","+","B","+","A","+","B","-","A","+","B","-","A","+","B","-","A","-","B"],
+["B","+","A","+","B","-","A","+","B","-","A","-","B","-","A","+","B","-","A","+","B","+","A","+","B","-","A","+","B","-","A","+","B"],
+["B","+","A","-","B","-","A","+","B","+","A","+","B","-","A","+","B","+","A","-","B","-","A","-","B","+","A","-","B","+","A","+","B"],
+["B","-","A","-","B","+","A","+","B","+","A","-","B","+","A","-","B","-","A","-","B","+","A","+","B"],
+    ["B","+","A","+","B","-","A","+","B","+","A","-","B","+","A","-","B"],
+    ["B","-","A","+","B","-","A","+","B","+","A","+","B","-","A","-","B"],
+    ["B","+","A","-","B","+","A","-","B","-","A","-","B","+","A","+","B"]
+]
+sigA = sigAs[0]
+
+
+// >>>>>>>
+// put radio buttons for example list
+    var mytable = document.getElementById("exampletable")
+
+    
+    for (var i=1; i<sigAs.length;i++){
+	var row = mytable.insertRow(i);
+	var cell = row.insertCell(0);
+	var myradio = document.createElement("input");
+        myradio.setAttribute("id","L"+i)
+        myradio.setAttribute("type","radio")
+	myradio.setAttribute("name","LS")
+	myradio.setAttribute("value",i)	
+	myradio.setAttribute("onclick","changeLsystem(this.value)")
+	cell.appendChild(myradio)
+	var cell1 = row.insertCell(1);
+	cell1.setAttribute("id","LS"+i)
+    }
+
+    {
+	var row = mytable.insertRow(sigAs.length);
+	var cell0 = row.insertCell(0);
+	var cell = row.insertCell(1);
+	var myinput = document.createElement("input");
+	myinput.setAttribute("type","text")
+	myinput.setAttribute("id","inputLsystem")
+	myinput.setAttribute("maxlength",20)
+	myinput.setAttribute("oninput","otherLsystem(this.value)")
+        myinput.setAttribute("value","A++--")
+	cell.appendChild(myinput)
+    }
+
+
+    
+    
+for(var i=0;i<sigAs.length;i++){
+document.getElementById("LS"+i).innerHTML=(sigAs[i]+"").replace(/,/g,"")
+}
+
+function invert(sig){
+      var inv = []
+      for (var ii=0;ii<sig.length;ii++){
+         i = sig.length-1-ii
+         if (sig[i]=="A"){inv+=["B"]}
+         if (sig[i]=="B"){inv+=["A"]}
+         if (sig[i]=="+"){inv+=["-"]}
+         if (sig[i]=="-"){inv+=["+"]}
+} 
+return inv
+}
+
+function invertB(bound){// inversion on bounaaries; maybe could also call this reverse
+     var invbou = new Array()
+     var ii
+     var len = bound.length
+     for (var i =0;i<len;i++){
+         ii = len-i-1 // note, at application of this function
+// symbols in the array its applied to should only be R,L,s; otherwise a bug occurs
+// currently no check on this, so take care!
+         if (bound[ii]=="R"){invbou.push("L")}
+         if (bound[ii]=="L"){invbou.push("R")}
+         if (bound[ii]=="s"){invbou.push("s")}
+     }
+     return invbou
+}
+
+
+
+    var sigB = invert(sigA)
+
+// could add?
+//<p>The L-system: A -> <span id="sigmaA"></span></p>
+//    document.getElementById("sigmaA").innerHTML = sigA
+
+    var currentpathA = ["A"]
+
+    var enddifference = [0,0] // difference between ends, computed for a positive
+    // direction A segment
+    ddiffs = [[1,0],[0,-1],[-1,0],[0,1]]// right,up,left,down
+    newplusdir =[3,0,1,2]  // new direction following right turn, // remember, y is negative up
+    newminudir =[1,2,3,0]  // depending on the current direction(right,up,left,down)
+
+function computeenddifference(){
+	var diff = [0,0]  // total difference
+	var ddiff = 0 // [0,0] // incremental difference per step
+	if (sigA[0]=="A"){ddiff = 0} //{[1,0]}
+	else {ddiff = 1}//{[0,1]}
+        diff[0] = ddiffs[ddiff][0]
+        diff[1] = ddiffs[ddiff][1]
+	for (var i=0;i<(sigA.length-1)/2;i++){// only consider odd terms, for +,-
+	    var ii=2*i+1;
+	    if (sigA[ii]=="+"){
+	 	  ddiff=newplusdir[ddiff]}
+	    else {ddiff=newminudir[ddiff]}
+	    diff[0] += ddiffs[ddiff][0]
+	    diff[1] += ddiffs[ddiff][1]
+	}
+	return diff
+    }
+
+    function matmult(A,B){ // 2x2 matrices; given column by column (is this a good idea?)
+	return [A[0]*B[0] + A[2]*B[1] ,
+		A[1]*B[0] + A[3]*B[1] ,
+		A[0]*B[2] + A[2]*B[3] ,
+		A[1]*B[2] + A[3]*B[3]
+		]
+    }
+    
+    var changevec = computeenddifference()
+    var changemat = [changevec[0],changevec[1],-changevec[1],changevec[0]] // column matrix
+    // take powers in stupid way for now.
+
+
+
+function computechangevec(){
+     changevec = computeenddifference()
+     changemat = [changevec[0],changevec[1],-changevec[1],changevec[0]] // column matrix
+}
+
+    var N = 2;// number of iterations
+    var mymat = [1,0,0,1]
+    for (i=0;i<N;i++){
+	var mm = matmult(mymat,changemat)
+        mymat[0] = mm[0]
+        mymat[1] = mm[1]
+        mymat[2] = mm[2]
+        mymat[3] = mm[3]
+    }
+    
+
+    // use compute differences to work out scaling so as to keep things with same end point
+    // need to construct the corresponding matrix
+    
+    function iterate(path){
+	var newpath = []
+	for (var i=0;i<path.length;i++){
+            if (path[i]=="A"){
+               newpath += [sigA]
+	    }
+	    else if (path[i]=="B"){
+               newpath += [sigB]
+	    }
+	    else if (path[i]=="+"){
+               newpath += "+"
+	    }
+	    else if (path[i]=="-"){
+               newpath += "-"
+	    }	
+	}
+	return newpath
+    }
+
+    var currentdir =  0; // direction, in terms of an angle to +ve x axis
+// note flip about y axis, since y is down in svg
+    var directions = [[1,0],[0,-1],[-1,0],[0,1]]
+
+    for (var i=0;i<N;i++){
+    currentpathA = iterate(currentpathA)
+    }
+
+// the step is the size of the unit length;
+// we fix this throughout program, and change scale for whole svg rather than for path 
+    var step = 20;
+    var curveamount = 7 // for curved corners to distinguish path
+    var stepB = step - 2*curveamount; // segement accounting for curve
+    var stepI = step - curveamount;    // initial case
+
+    
+    // set up background grid
+    // the point of the grid mode is that the L-system for the
+    // Boundary depends on the parity of the start squares, so this
+    // can be illustrated by considering the checked grid
+    function setupgrid(){
+	var mygrid = document.getElementById("grid")
+var text = ""
+	if (showgrid){
+	 text = "M" + (250 - 10.5*step) + " " + (250 - 10.5*step)
+	for (var i=0;i<=10;i++){
+            text += "l 0 " + (21*step) + " l "+ (1*step) +" 0"
+	    text += "l 0 " + (-21*step) + " l "+ (1*step) +" 0"	    
+	}
+	text+="l "+(-1*step)+ " 0 "
+		for (var i=0;i<10;i++){
+            text += " l "+" 0 "+ (1*step)  +  "l " + (-21*step) +" 0"
+	    text += " l "+" 0 "+ (1*step)  +  "l " + (21*step)  +" 0"
+		}
+	    text += " l "+" 0 "+ (1*step)  +  "l " + (-21*step) +" 0"
+	}
+	    mygrid.setAttribute("d",text)	    
+    }
+
+
+var showgrid = false    
+    function showchecks(){
+	showgrid = !showgrid
+	    setupgrid()
+    }
+    
+    
+function setsteps(){
+  step = scale*20
+  curveamount = 7*scale
+  stepB = step - 2*curveamount;
+  stepI = step - curveamount
+}
+
+//e/g:  a20,20 0 0 1 20,20: draw an arc with 20px X radius, 20px Y radius, clockwise, to a point with 20px difference in X and Y axis
+    // lets do directions ->, n <- v, with clockwise first
+    // note that y direction is down
+
+var arcparts
+
+function setarcparts(){
+    arcparts = ["a"+curveamount + "," +curveamount +" 0 0 1 "+ curveamount +", "+curveamount+" ",
+		    "a"+curveamount + "," +curveamount +" 0 0 0 "+ curveamount +", -"+curveamount+" ",
+		    "a"+curveamount + "," +curveamount +" 0 0 1 "+ curveamount +", -"+curveamount+" ",
+		    "a"+curveamount + "," +curveamount +" 0 0 0 "+ " -" + curveamount +", -"+curveamount+" ",
+		    "a"+curveamount + "," +curveamount +" 0 0 1 "+ " -" +curveamount +", -"+curveamount+" ",
+		    "a"+curveamount + "," +curveamount +" 0 0 0 "+ " -" +curveamount +", "+curveamount+" ",
+		    "a"+curveamount + "," +curveamount +" 0 0 1 "+" -" + curveamount +", "+curveamount+" ",
+		    "a"+curveamount + "," +curveamount +" 0 0 0 "+ curveamount +", "+curveamount+" "]
+}
+setarcparts()
+
+    var arcpartsno = 0 // which arcparts text
+
+var thefourpaths=["","","",""]
+var fourpathsset = [false,false,false,false]
+
+function createfourpaths(){
+
+}
+
+	function drawspacefillingpathtext(initialdir,startpoint){
+    var mypath0 = "M "+startpoint; //"M 250 250 "
+    var mypath = " "
+    	// this is not necessarily true, but OK for one path
+    var currentdir = 1*initialdir
+    // there is a slight problem that I don't really distinguish between A and B enough.
+    // this is to do with having to rotate or change scale etc anyway for convergence
+// we have to decide where to correct this issue.  Either we could do here
+// or just put in an overall transform later
+// also note that even B and A diretions are not really entirely well defined as a starting direction
+// since they mean horizontal or vertical, but not which way.  
+// we could argue that A and B directions are only properly defined once the first step is taken,
+// and that could be in any direction
+// also there is a problem that our change of basis matrix is a rotation and scaling, but 
+// this should correspond to a rotation of initial direction, if this needs to be
+// compensated for in the rescale adjustment, so, we should disingish start directions for all 4 possible directions
+
+if (sigA[0]=="B" && sigA[sigA.length-1]=="B"){
+//
+// currentdir = (1*initialdir + 1*N)%4   // use 1* to force parse as int.  Don't know why this was
+    // defauling to string; probably somewhere else because of using in text
+currentdir = (1*initialdir + 1*N*N)%4   // however, not sure this is really necessay
+// instead of trying with matrix for correct rotation, will check path end point
+}
+else if (currentpathA[0]=="B"){currentdir    = (currentdir    +1)%4 ; }// slight cheat
+// because all paths are the same, just rotated from each other, so I am not really
+// distinguishing A and B as much as I should
+    if (!fourpathsset[initialdir]){  // save time, dont recompute translates
+        fourpathsset[initialdir] = true
+	if (	currentpathA.length==1){// length 1 case
+            mypath +="l "+step*directions[currentdir][0] + " " + step*directions[currentdir][1]
+	}
+	else{
+       // i=0 case maybe doesnt have initial curve:
+       mypath +=    " l " + (stepI*directions[currentdir][0]) +" "
+							       + (stepI*directions[currentdir][1]) + " "
+	for (var i=1;i<currentpathA.length-1;i++){	    
+            if (currentpathA[i]=="A" || currentpathA[i]=="B" ){mypath += arcparts[arcpartsno] + 
+							       " l " + (stepB*directions[currentdir][0]) +" "
+							       + (stepB*directions[currentdir][1]) + " "}
+	    else if (currentpathA[i]=="+"){if (currentdir==0){currentdir=3; arcpartsno = 0 }
+					   else if (currentdir==1){currentdir=0; arcpartsno = 2}
+					   else if (currentdir==2){currentdir=1; arcpartsno = 4}
+					   else if (currentdir==3){currentdir=2; arcpartsno = 6}
+					   }
+	    else if (currentpathA[i]=="-"){if (currentdir==0){currentdir=1; arcpartsno = 1}
+					   else if (currentdir==1){currentdir=2; arcpartsno = 3}
+					   else if (currentdir==2){currentdir=3; arcpartsno = 5}
+					   else if (currentdir==3){currentdir=0; arcpartsno = 7}
+					  }
+							       
+	}
+	// last case; lnger line:
+mypath += arcparts[arcpartsno] + 
+							       " l " + (stepI*directions[currentdir][0]) +" "
+							       + (stepI*directions[currentdir][1]) + " "
+	}
+thefourpaths[initialdir]=mypath
+}
+else {mypath = thefourpaths[initialdir]}
+
+    return mypath0 + mypath
+}
+    
+// this is the first path, corresponding to a A pointing right
+    function drawspacefillingpath(name,initialdir,startpoint){
+	var thepath = document.getElementById(name)//("spacefillingcurve")
+	var mypath = drawspacefillingpathtext(initialdir,startpoint)
+	thepath.setAttribute("d",mypath)
+    }
+
+
+  var colsdefault =    ["#2cbcb5","#ff5555","#00ff0a","#ffff00","#032963"]
+  // turqiosi-blue, red, bright-green, bright-yellow, dark-blue
+  var altcolsdefault = ["#438f48","#a872d4","#95c9ed","#FF5733","#ffffcc"]
+
+  
+  // dark-green, purple, pale-blue,red-orange,  cream
+  var cols = ["#2cbcb5","#ff5555","#00ff0a","#ffff00","#032963"]
+    
+// note, everything is not actully everytihng, does not scale background
+    var svgpic = document.getElementById("everythingA") // 
+    
+    var limA = -2
+    var limB = 3
+//limA = 0
+//limB=1
+
+    function createlines(){    
+    for (var i=1-limB;i<limB;i++){
+	for (var j=1-limB;j<limB;j++){
+	    if ((i+j)%2==0){
+		var newcent = [250 + step*(mymat[0]*i+mymat[2]*j),
+		       250 + step*(mymat[1]*i+mymat[3]*j)]
+
+		for (var k=0;k<4;k++){
+var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path'); 
+		    newElement.setAttribute("d",drawspacefillingpathtext(k,newcent))
+		    newElement.setAttribute("id","spacefillingcurve"+i+"-"+j+"-"+k)
+		    newElement.style.stroke = cols[k]; //Set stroke colour
+		    newElement.style.fill =// cols[k]; // reset elsewhere
+		    "none"; //Set stroke colour
+newElement.style.strokeWidth = "2px"; //Set stroke width
+svgpic.appendChild(newElement);
+	    }
+	    }
+	}
+    }
+    }
+
+
+
+
+    function createboudaries(){    
+    for (var i=1-limB;i<limB;i++){
+	for (var j=1-limB;j<limB;j++){
+	    if ((i+j)%2==0){
+		var newcent = [250 + step*(mymat[0]*i+mymat[2]*j),
+		       250 + step*(mymat[1]*i+mymat[3]*j)]
+
+		for (var k=0;k<4;k++){
+var newElement = document.createElementNS("http://www.w3.org/2000/svg", 'path'); 
+//
+		    newElement.setAttribute("id","boundarycentral"+i+"-"+j+"-"+k)
+		    newElement.style.stroke = cols[k]; //Set stroke colour
+		    newElement.style.fill = cols[(k+1)%4]; // fill colour
+newElement.style.strokeWidth = "0px"; //Set stroke width
+svgpic.appendChild(newElement);
+	    }
+	    }
+	}
+    }
+    }
+
+    createboudaries()
+        createlines()
+
+
+  function setlinecols(){
+      	console.log("mmm")
+    for (var i=1-limB;i<limB;i++){
+	for (var j=1-limB;j<limB;j++){
+	    if ((i+j)%2==0){
+		for (var k=0;k<4;k++){                     
+		    var path =document.getElementById("spacefillingcurve"+i+"-"+j+"-"+k)
+		    path.style.stroke = cols[k]; //Set stroke colour
+		    // also set background tile colour:		    
+// not sure whether to use .style or setAttribute?
+document.getElementById("boundarycentral"+i+"-"+j+"-"+k).setAttribute("stroke",
+											  cols[(k+1)%4])
+document.getElementById("boundarycentral"+i+"-"+j+"-"+k).setAttribute("fill",
+											  cols[(k+1)%4])
+document.getElementById("boundarycentral"+i+"-"+j+"-"+k).style.stroke=cols[(k+1)%4]
+document.getElementById("boundarycentral"+i+"-"+j+"-"+k).style.fill=cols[(k+1)%4]
+
+		}
+	    }
+	}
+    }
+// also change background:
+//	document.getElementById("curveandboundarypic").setAttribute("background",cols[4])
+	document.getElementById("curveandboundarypic").style.background=cols[4]
+      console.log("sdf")
+    }
+
+
+    var showhide = ["none","inline"]
+    function moreoptions(val){
+	document.getElementById("extraoptions").style.display = showhide[val]
+    }
+
+var  colourlinesoption=1
+  function colourlines(val){
+      colourlinesoption = val
+	if (val==0){
+	     for(var i=0;i<4;i++){
+               cols[i] = "white"
+	     }
+	    cols[4]="#032963"
+	}
+	else if (val==1){
+	    for(var i=0;i<cols.length;i++){
+              cols[i] = colsdefault[i]
+	    }
+	}
+	else if (val==2){
+	    for(var i=0;i<cols.length;i++){
+              cols[i] = altcolsdefault[i]
+	    }
+	}      
+      setlinecols()
+    }
+
+
+    var manyfewcount = 0
+function redopaths(){
+fourpathsset = [false,false,false,false]
+ mymat = [1,0,0,1]
+    for (i=0;i<N;i++){
+	mymat = matmult(mymat,changemat)	
+    }
+    for (var i=1-limB;i<limB;i++){ // in the two path mode, we have(i,j,k)=(0,0,1),(1,-1,2)
+	for (var j=1-limB;j<limB;j++){
+	    if ((i+j)%2==0 && (manyfewcount<2 || (i==0&&j==0) || (i==1&&j==-1))){
+		var newcent = [250 + step*(mymat[0]*i+mymat[2]*j),
+		       250 + step*(mymat[1]*i+mymat[3]*j)]
+		for (var k=0;k<4;k++){
+		    
+      var myElement = document.getElementById("spacefillingcurve"+i+"-"+j+"-"+k)
+		    if ( (N<4 || (Math.abs(i)<2 || Math.abs(j)<2))
+			 && (manyfewcount <2 || (i==0&&k==1) || (i==1 && k==2))
+		       ){
+      myElement.setAttribute("d",drawspacefillingpathtext(k,newcent))
+		    }
+		    else {myElement.setAttribute("d","")
+			  // also get red of tiles especially in manyfewpaths=2
+	 document.getElementById("boundarycentral"+i+"-"+j+"-"+k).setAttribute("d","")
+			 }
+		}
+	    }
+	}
+    }
+}
+
+
+    // warning, this is extremely inefficient
+    // and could be rewritten to avoid computing the same thing over and over
+    function redotiles(path1,path2){
+	if (tiles==false){return}
+    // assume mymat has just been reset by redopaths function having been
+    // already run.
+    for (var i=1-limB;i<limB;i++){
+	for (var j=1-limB;j<limB;j++){
+	    if ((i+j)%2==0  && (manyfewcount<2 || (i==0&&j==0) || (i==1&&j==-1))){
+		var newcent = [250 + step*(mymat[0]*i+mymat[2]*j),
+		       250 + step*(mymat[1]*i+mymat[3]*j)]
+		for (var k=0;k<4;k++){
+      var myElement = document.getElementById("boundarycentral"+i+"-"+j+"-"+k)
+		    if ((N<4 || (Math.abs(i)<2 || Math.abs(j)<2))
+			&& (manyfewcount <2 || (i==0&&k==1) || (i==1 && k==2)))
+			{
+			if (tilecolouroption==1){
+			    // this is filled tiles
+			    myElement.setAttribute("d",centralsidetext(path1,path2,k,newcent))
+			    myElement.style.stroke = cols[k]; //Set stroke colou			    
+			    myElement.style.fill = cols[(k+1)%4]; // fill colour
+			    myElement.style.strokeWidth = "0px"; //Set stroke width
+			}
+			else if (tilecolouroption==2){
+			    // this is just tile outline, for laser cutting
+			    myElement.setAttribute("d",centralsidetext(path1,"",k,newcent))
+			    if (colourlinesoption==0){myElement.style.stroke = "red"}
+			    else {myElement.style.stroke = cols[k];} //Set stroke colour
+			    myElement.style.fill = "none"; // fill colour
+			    myElement.style.strokeWidth = "4px"; //Set stroke width
+			}
+
+			}
+		    else {myElement.setAttribute("d","") // check next line later
+		document.getElementById("boundarycentral"+i+"-"+j+"-"+k).setAttribute("d","")
+			  
+     }
+		}
+	    }
+	}
+    }
+	document.getElementById("curveandboundarypic").style.background=cols[4]
+	    
+    }
+    
+
+function redoiteration(){
+ currentpathA = ["A"]
+    for (var i=0;i<N;i++){
+    currentpathA = iterate(currentpathA)
+    }
+// redopaths()
+}
+
+function createleft(){
+   var listL = []
+   for(var i =0;i<sigA.length;i++){
+      if (sigA[i]=="A" || sigA[i]=="B"){
+      listL.push("R")
+   }
+   else if (sigA[i]=="+"){listL.push("s")}
+   else if (sigA[i]=="-"){listL.push("v")}
+}
+return listL
+}
+
+var listL = createleft()
+
+function createright(){ // right side, a transformation of a left turn
+   var listR = []
+   for(var i =0;i<sigA.length;i++){
+      if (sigA[i]=="A" || sigA[i]=="B"){
+      listR.push("L")
+   }
+   else if (sigA[i]=="-"){listR.push("s")}
+   else if (sigA[i]=="+"){listR.push("v")}
+}
+return listR
+}
+
+var listR = createright()
+
+function reduce(path0){// function will not change path0
+   var path = new Array()
+   for (var i=0;i<path0.length;i++){
+        path.push(path0[i])
+   }
+   var containsv = true
+   var ind
+      ind = path.indexOf("v")
+   if (ind!=-1){containsv = true}
+   else {containsv = false}
+   var ii = 0
+   while(containsv && ii<10000){// warning, potential bug if input is not from something
+   // where this termintes; so put ii just in case; currently no report on bug
+   ii+=1
+        if (path[ind-1]=="R" && path[ind+1]=="R"){path[ind]="s"}
+   else if (path[ind-1]=="s" && path[ind+1]=="R"){path[ind]="L"}
+   else if (path[ind-1]=="R" && path[ind+1]=="s"){path[ind]="L"}
+   else if (path[ind-1]=="L" && path[ind+1]=="L"){path[ind]="s"}
+   else if (path[ind-1]=="s" && path[ind+1]=="L"){path[ind]="R"}
+   else if (path[ind-1]=="L" && path[ind+1]=="s"){path[ind]="R"}
+   else if (path[ind-1]=="R" && path[ind+1]=="L"){path[ind]="v"}
+   else if (path[ind-1]=="s" && path[ind+1]=="s"){path[ind]="v"}
+   else if (path[ind-1]=="L" && path[ind+1]=="R"){path[ind]="v"}
+   // remove elemtns either side of path[ind]:
+   path.splice(ind+1,1)
+   path.splice(ind-1,1)
+   ind = path.indexOf("v")
+   if (ind==-1){containsv = false}
+}
+  // now remove everyother term:
+  // this assumes every other term is now an s
+  var len = path.length
+  for (var i=0;i<(len+1)/2;i++){
+    ii = len - 2*i
+    path.splice(ii,1)
+  } 
+   return path
+}
+
+
+
+function reduceS(path0){// this assume there is not an s at every other step
+   var path = new Array()
+   for (var i=0;i<path0.length;i++){
+        path.push(path0[i])
+   }
+   var containsv = true
+   var ind
+      ind = path.indexOf("v")
+   if (ind!=-1){containsv = true}
+   var ii = 0
+   while(containsv && ii<10000){// warning, potential bug if input is not from something
+   // where this termintes; so put ii just in case; currently no report on bug
+   ii+=1
+        if (path[ind-1]=="R" && path[ind+1]=="R"){path[ind]="s"}
+   else if (path[ind-1]=="s" && path[ind+1]=="R"){path[ind]="L"}
+   else if (path[ind-1]=="R" && path[ind+1]=="s"){path[ind]="L"}
+   else if (path[ind-1]=="L" && path[ind+1]=="L"){path[ind]="s"}
+   else if (path[ind-1]=="s" && path[ind+1]=="L"){path[ind]="R"}
+   else if (path[ind-1]=="L" && path[ind+1]=="s"){path[ind]="R"}
+   else if (path[ind-1]=="R" && path[ind+1]=="L"){path[ind]="v"}
+   else if (path[ind-1]=="s" && path[ind+1]=="s"){path[ind]="v"}
+   else if (path[ind-1]=="L" && path[ind+1]=="R"){path[ind]="v"}
+   // remove elemtns either side of path[ind]:
+   path.splice(ind+1,1)
+   path.splice(ind-1,1)
+   ind = path.indexOf("v")
+   if (ind==-1){containsv = false}
+}
+   return path
+}
+
+
+
+listL = reduce(listL)
+
+listR = reduce(listR)
+
+var listr = invertB(listL)
+var listl = invertB(listR)
+
+
+function createS(){
+   var listS0 = new Array();
+   for (var i=0;i<listR.length;i++){
+     listS0.push(listR[i])
+   }
+   listS0.push("v")
+   for (var i=0;i<listr.length;i++){
+     listS0.push(listr[i])
+   }
+   return reduceS(listS0)
+}
+
+
+function creates(){
+   var lists0 = new Array();
+   for (var i=0;i<listr.length;i++){
+     lists0.push(listr[i])
+   }
+   lists0.push("v")
+   for (var i=0;i<listR.length;i++){
+     lists0.push(listR[i])
+   }
+   return reduceS(lists0)
+}
+
+var listS = createS()
+var lists = creates()
+
+// directions for diagonals, listed rotationally starting at 45 to x axis,
+// noting that y is negative up;
+// directions : ne, nw, sw, se
+var Bdirs = [[1,-1],[-1,-1],[-1,1],[1,1]]
+var newBdirL = [1,2,3,0]
+var newBdirR = [3,0,1,2]
+
+
+
+// change case of lement i of list
+function setcase(list,i,lettercase){ // case is 0 for lower, 1 for upper
+if (lettercase==0){
+  if (list[i]=="R"){list[i]="r"}
+  else if (list[i]=="L"){list[i]="l"}
+  else if (list[i]=="S"){list[i]="s"}
+}
+else if (lettercase==1){
+  if (list[i]=="r"){list[i]="R"}
+  else if (list[i]=="l"){list[i]="L"}
+  else if (list[i]=="s"){list[i]="S"}
+}
+
+}
+
+
+// we need to sort out the cases of elements of
+// listL, listl, listR, listr ,listS, lists
+function sortcases(){
+// easy case, sigA starts with "A" and length is odd
+if (sigA[0]=="A" && ((sigA.length+1)/2)%2==1){
+   var currentcase = 1 // upper case; 0 is lower case
+   for (var i=0;i<listL.length;i++){
+      setcase(listL,i,currentcase)
+      if (listL[i]!="S" && listL[i]!="s"){currentcase = 1-currentcase}
+   }
+   currentcase = 1 // upper case; 0 is lower case
+   for (var i=0;i<listR.length;i++){
+      setcase(listR,i,currentcase)
+      if (listR[i]!="S" && listR[i]!="s"){currentcase = 1-currentcase}
+   }
+   currentcase = 1 // upper case; 0 is lower case
+   for (var i=0;i<listS.length;i++){
+      setcase(listS,i,currentcase)
+      if (listS[i]!="S" && listS[i]!="s"){currentcase = 1-currentcase}
+   }
+   var currentcase = 0 // upper case; 0 is lower case
+   for (var i=0;i<listl.length;i++){
+      setcase(listl,i,currentcase)
+      if (listl[i]!="S" && listl[i]!="s"){currentcase = 1-currentcase}
+   }
+   currentcase = 0 // upper case; 0 is lower case
+   for (var i=0;i<listr.length;i++){
+      setcase(listr,i,currentcase)
+      if (listr[i]!="S" && listr[i]!="s"){currentcase = 1-currentcase}
+   }
+   currentcase = 0 // upper case; 0 is lower case
+   for (var i=0;i<lists.length;i++){
+      setcase(lists,i,currentcase)
+      if (lists[i]!="S" && lists[i]!="s"){currentcase = 1-currentcase}
+   }
+}
+// other cases to be added?
+// next case, start from A, but even length:
+else if (sigA[0]=="A" && ((sigA.length+1)/2)%2==0){
+// in this case, if we are assuming that capital is odd,
+// then everything start even, so lower case
+   var currentcase = 1 // upper case; 0 is lower case
+   for (var i=0;i<listL.length;i++){
+      setcase(listL,i,currentcase)
+      if (listL[i]!="S" && listL[i]!="s"){currentcase = 1-currentcase}
+   }
+   currentcase = 1 // upper case; 0 is lower case
+   for (var i=0;i<listR.length;i++){
+      setcase(listR,i,currentcase)
+      if (listR[i]!="S" && listR[i]!="s"){currentcase = 1-currentcase}
+   }
+   currentcase = 1 // upper case; 0 is lower case
+   for (var i=0;i<listS.length;i++){
+      setcase(listS,i,currentcase)
+      if (listS[i]!="S" && listS[i]!="s"){currentcase = 1-currentcase}
+   }
+   var currentcase = 1 // upper case; 0 is lower case
+   for (var i=0;i<listl.length;i++){
+      setcase(listl,i,currentcase)
+      if (listl[i]!="S" && listl[i]!="s"){currentcase = 1-currentcase}
+   }
+   currentcase = 1 // upper case; 0 is lower case
+   for (var i=0;i<listr.length;i++){
+      setcase(listr,i,currentcase)
+      if (listr[i]!="S" && listr[i]!="s"){currentcase = 1-currentcase}
+   }
+   currentcase = 1 // upper case; 0 is lower case
+   for (var i=0;i<lists.length;i++){
+      setcase(lists,i,currentcase)
+      if (lists[i]!="S" && lists[i]!="s"){currentcase = 1-currentcase}
+   }
+}
+// next, even length, but starting from B:
+// next case, start from A, but even length:
+else if (sigA[0]=="B" && ((sigA.length+1)/2)%2==0){
+// in this case, if we are assuming that capital is odd,
+// then everything start even, so lower case
+   var currentcase = 0 // upper case; 0 is lower case
+   for (var i=0;i<listL.length;i++){
+      setcase(listL,i,currentcase)
+      if (listL[i]!="S" && listL[i]!="s"){currentcase = 1-currentcase}
+   }
+   currentcase = 0 // upper case; 0 is lower case
+   for (var i=0;i<listR.length;i++){
+      setcase(listR,i,currentcase)
+      if (listR[i]!="S" && listR[i]!="s"){currentcase = 1-currentcase}
+   }
+   currentcase = 0 // upper case; 0 is lower case
+   for (var i=0;i<listS.length;i++){
+      setcase(listS,i,currentcase)
+      if (listS[i]!="S" && listS[i]!="s"){currentcase = 1-currentcase}
+   }
+   var currentcase = 0 // upper case; 0 is lower case
+   for (var i=0;i<listl.length;i++){
+      setcase(listl,i,currentcase)
+      if (listl[i]!="S" && listl[i]!="s"){currentcase = 1-currentcase}
+   }
+   currentcase = 0 // upper case; 0 is lower case
+   for (var i=0;i<listr.length;i++){
+      setcase(listr,i,currentcase)
+      if (listr[i]!="S" && listr[i]!="s"){currentcase = 1-currentcase}
+   }
+   currentcase = 0 // upper case; 0 is lower case
+   for (var i=0;i<lists.length;i++){
+      setcase(lists,i,currentcase)
+      if (lists[i]!="S" && lists[i]!="s"){currentcase = 1-currentcase}
+   }
+}
+// finally, odd length, starting from B
+else if (sigA[0]=="B" && ((sigA.length+1)/2)%2==1){
+   var currentcase = 0 // upper case; 0 is lower case
+   for (var i=0;i<listL.length;i++){
+      setcase(listL,i,currentcase)
+      if (listL[i]!="S" && listL[i]!="s"){currentcase = 1-currentcase}
+   }
+   currentcase = 0 // upper case; 0 is lower case
+   for (var i=0;i<listR.length;i++){
+      setcase(listR,i,currentcase)
+      if (listR[i]!="S" && listR[i]!="s"){currentcase = 1-currentcase}
+   }
+   currentcase = 0 // upper case; 0 is lower case
+   for (var i=0;i<listS.length;i++){
+      setcase(listS,i,currentcase)
+      if (listS[i]!="S" && listS[i]!="s"){currentcase = 1-currentcase}
+   }
+   var currentcase = 1 // upper case; 0 is lower case
+   for (var i=0;i<listl.length;i++){
+      setcase(listl,i,currentcase)
+      if (listl[i]!="S" && listl[i]!="s"){currentcase = 1-currentcase}
+   }
+   currentcase = 1 // upper case; 0 is lower case
+   for (var i=0;i<listr.length;i++){
+      setcase(listr,i,currentcase)
+      if (listr[i]!="S" && listr[i]!="s"){currentcase = 1-currentcase}
+   }
+   currentcase = 1 // upper case; 0 is lower case
+   for (var i=0;i<lists.length;i++){
+      setcase(lists,i,currentcase)
+      if (lists[i]!="S" && lists[i]!="s"){currentcase = 1-currentcase}
+   }
+}
+}
+
+
+sortcases()
+
+var currentBR= new Array()
+var currentBL= new Array()
+
+// listL is for left side, but for right turn... lets change:
+// this is L-system rules
+var Llistl = listr
+var Llistr = listl
+var Llists = lists
+var LlistL = listR
+var LlistR = listL
+var LlistS = listS
+
+
+document.getElementById("R").innerHTML=LlistR
+document.getElementById("r").innerHTML=Llistr
+document.getElementById("L").innerHTML=LlistL
+document.getElementById("l").innerHTML=Llistl
+document.getElementById("S").innerHTML=LlistS
+document.getElementById("s").innerHTML=Llists
+
+
+var boundaryiterates = new Array()
+// simplest case is boundary of one line;
+// do for R,L,r,l,S,s; to begin with, its just these symbols themselves
+// make sure to access in correct order!!
+boundaryiterates = ["R","L","S","r","l","s"]
+
+function iterateB(){
+  // lets just do the right turn and left turn first
+// note, list R is right side, but left turn
+
+for (var j=0;j<2;j++){
+  var tempR = new Array() // first iteration:
+  for (var i=0;i<boundaryiterates[j].length;i++){
+    tempR.push(boundaryiterates[j][i])
+  }
+  var tempRR = new Array()
+  for (var i=0;i<tempR.length;i++){ // we dont actually need to keep posting the L-system;
+// should move this code and place elsewhere
+    if (tempR[i]=="r")     {tempRR = tempRR.concat(Llistr)}
+    else if (tempR[i]=="l"){tempRR = tempRR.concat(Llistl)}
+    else if (tempR[i]=="s"){tempRR = tempRR.concat(Llists)}
+    else if (tempR[i]=="R"){tempRR = tempRR.concat(LlistR)}
+    else if (tempR[i]=="L"){tempRR = tempRR.concat(LlistL)}
+    else if (tempR[i]=="S"){tempRR = tempRR.concat(LlistS)}
+  }
+  boundaryiterates[j] = new Array() // 
+  for (var i=0;i<tempRR.length;i++){
+      boundaryiterates[j].push(tempRR[i])
+  }
+  }
+}
+
+
+var listR2;// = iterateB()
+
+
+function initialRdir(){
+    if (currentpathA[0]=="A"){   return 0}
+    return 1
+  }
+
+function initialLdir(){
+        if (currentpathA[0]=="A"){   return 3}
+   return 0
+  }
+// recall var Bdirs = [[1,-1],[-1,-1],[-1,1],[1,1]]
+function drawABoundary(path,name,startpoint,initialdir){
+   var bS = document.getElementById(name)
+   var x0 = 250  // central start
+   var x1 = 250
+   var text = "M " + startpoint + " " // + x0 + " " + x1 +" "
+   var dir  // dirrection of path
+   dir = initialdir
+   // very first move is half normal length
+   var hstep = 0.5*step
+   text +="l"+(hstep*Bdirs[dir][0]) + ","+(hstep*Bdirs[dir][1])+" "
+    var len = path.length-1
+   for (var i=0;i<len;i++){
+      if (path[i]=="R" || path[i]=="r" ){dir = newBdirR[dir]}
+      else if (path[i]=="L" || path[i]=="l"){dir = newBdirL[dir]}  // s doesnt change direction
+         text +="l"+(step*Bdirs[dir][0]) + ","+(step*Bdirs[dir][1])+" "
+     }
+    if (path[len]=="R" || path[i]=="r"){dir = newBdirR[dir]}
+      else if (path[len]=="L" || path[i]=="l"){dir = newBdirL[dir]}  // s doesnt change direction
+      text +="l"+(hstep*Bdirs[dir][0]) + ","+(hstep*Bdirs[dir][1])+" "
+   bS.setAttribute("d",text)
+}
+
+
+function createLsystem(){
+  
+}
+
+
+    var linewidthA = 2
+    var linewidthB = 8
+	
+    function changewidth(val,width){
+	if (val==0){
+   for (var i=-2;i<3;i++){
+	for (var j=-2;j<3;j++){
+	    if ((i+j)%2==0){
+		for (var k=0;k<4;k++){
+		    var myElement =
+			document.getElementById
+		    ("spacefillingcurve"+i+"-"+j+"-"+k)
+                    myElement.style.strokeWidth = width + "px"
+		}}}}
+	}
+	if (val==1){
+	    document.getElementById("boundaryT").style.strokeWidth = width + "px"
+	    document.getElementById("boundaryT2").style.strokeWidth = width + "px"	    
+	}
+    
+}
+
+
+    function drawcentralside(path1,path2,initialdir){
+    // this consists of image of R and r
+    var bS = document.getElementById("boundarycentral")
+   var x0 = origin[0]  // central start
+   var x1 = origin[1]
+	var text = "M " + x0 +" " + x1 + " " // + x0 + " " + x1 +" "
+   var dir  // dirrection of path
+   dir = initialdir
+   // very first move is half normal length
+   var hstep = 0.5*step
+	text +="l"+(hstep*Bdirs[dir][0]) + ","+(hstep*Bdirs[dir][1])+" "	
+	var len = path1.length-1
+   for (var i=0;i<len;i++){
+      if (path1[i]=="R" || path1[i]=="r" ){dir = newBdirR[dir]}
+      else if (path1[i]=="L" || path1[i]=="l"){dir = newBdirL[dir]}  // s doesnt change direction
+         text +="l"+(step*Bdirs[dir][0]) + ","+(step*Bdirs[dir][1])+" "
+     }
+    if (path1[len]=="R" || path1[i]=="r"){dir = newBdirR[dir]}
+    else if (path1[len]=="L" || path1[i]=="l"){dir = newBdirL[dir]}  // s doesnt change direction
+    text +="l"+(hstep*Bdirs[dir][0]) + ","+(hstep*Bdirs[dir][1])+" "
+
+
+    // intermediate step; which will be a right turn:
+    dir = newBdirR[dir]
+
+    // now do left side:
+    // short first step
+	text +="l"+(hstep*Bdirs[dir][0]) + ","+(hstep*Bdirs[dir][1])+" "
+	len = path2.length-1
+  for (var i=0;i<len;i++){
+      if (path2[i]=="R" || path2[i]=="r" ){dir = newBdirR[dir]}
+      else if (path2[i]=="L" || path2[i]=="l"){dir = newBdirL[dir]}  // s doesnt change direction
+         text +="l"+(step*Bdirs[dir][0]) + ","+(step*Bdirs[dir][1])+" "
+     }
+    if (path2[len]=="R" || path2[i]=="r"){dir = newBdirR[dir]}
+    else if (path2[len]=="L" || path2[i]=="l"){dir = newBdirL[dir]}  // s doesnt change direction
+    text +="l"+(hstep*Bdirs[dir][0]) + ","+(hstep*Bdirs[dir][1])+" "
+
+	
+     bS.setAttribute("d",text)
+    }
+
+    function centralsidetext(path1,path2,initialdir,startpoint){
+    // this consists of image of R and r
+   var x0 = startpoint[0]  // central start
+   var x1 = startpoint[1]
+	var text = "M " + x0 +" " + x1 + " " // + x0 + " " + x1 +" "
+   var dir  // dirrection of path
+   dir = initialdir
+   // very first move is half normal length
+   var hstep = 0.5*step
+	text +="l"+(hstep*Bdirs[dir][0]) + ","+(hstep*Bdirs[dir][1])+" "	
+	var len = path1.length-1
+   for (var i=0;i<len;i++){
+      if (path1[i]=="R" || path1[i]=="r" ){dir = newBdirR[dir]}
+      else if (path1[i]=="L" || path1[i]=="l"){dir = newBdirL[dir]}  // s doesnt change direction
+         text +="l"+(step*Bdirs[dir][0]) + ","+(step*Bdirs[dir][1])+" "
+   }
+
+	
+    if (path1[len]=="R" || path1[i]=="r"){dir = newBdirR[dir]}
+    else if (path1[len]=="L" || path1[i]=="l"){dir = newBdirL[dir]}  // s doesnt change direction
+    text +="l"+(hstep*Bdirs[dir][0]) + ","+(hstep*Bdirs[dir][1])+" "
+	
+	if (tilecolouroption!=2){
+    // intermediate step; which will be a right turn:
+    dir = newBdirR[dir]
+
+    // now do left side:
+    // short first step
+	text +="l"+(hstep*Bdirs[dir][0]) + ","+(hstep*Bdirs[dir][1])+" "
+	len = path2.length-1
+  for (var i=0;i<len;i++){
+      if (path2[i]=="R" || path2[i]=="r" ){dir = newBdirR[dir]}
+      else if (path2[i]=="L" || path2[i]=="l"){dir = newBdirL[dir]}  // s doesnt change direction
+         text +="l"+(step*Bdirs[dir][0]) + ","+(step*Bdirs[dir][1])+" "
+     }
+    if (path2[len]=="R" || path2[i]=="r"){dir = newBdirR[dir]}
+    else if (path2[len]=="L" || path2[i]=="l"){dir = newBdirL[dir]}  // s doesnt change direction
+    text +="l"+(hstep*Bdirs[dir][0]) + ","+(hstep*Bdirs[dir][1])+" "
+	}
+return text
+    }
+        
+
+    
+function layout(val){
+   document.getElementById("side1").className = "containerA" + val
+   document.getElementById("side2").className = "containerB" + val
+}
+
+    function changeLsystem(value){
+
+		     if (value==6 || value==7)
+	{document.getElementById("levelrange").max = 12}
+		     else
+	{document.getElementById("levelrange").setAttribute("max",4)
+         if (N>4){N=4;
+		  document.getElementById("N").innerHTML = "N: " +4;
+		 }
+	}
+	
+	 rescale(rescaling)
+  // set sigA
+	sigA = sigAs[value]
+	settextbox()
+ sigB = invert(sigA)
+  // set listR etc
+  var cL = createleft()
+  listL = reduce(cL)
+  listR = reduce(createright())
+  listr = invertB(listL)
+  listl = invertB(listR)
+  listS = createS()
+  lists = creates()
+sortcases()
+
+ Llistl = listr
+ Llistr = listl
+ Llists = lists
+ LlistL = listR
+ LlistR = listL
+ LlistS = listS
+
+// record/display L-system for boundary
+document.getElementById("R").innerHTML=LlistR
+document.getElementById("r").innerHTML=Llistr
+document.getElementById("L").innerHTML=LlistL
+document.getElementById("l").innerHTML=Llistl
+document.getElementById("S").innerHTML=LlistS
+document.getElementById("s").innerHTML=Llists
+// display one unit examples:
+computechangevec()
+redoiteration()
+redopaths()
+boundaryiterates = ["R","L","S","r","l","s"]
+for(var i=0;i<N;i++){
+iterateB()
+}
+drawABoundary(boundaryiterates[0],"boundaryT",[250,250],initialRdir()) 
+drawABoundary(boundaryiterates[1],"boundaryT2",//[250+step*(changemat[0]+changemat[2]),
+                                               // 250+step*(changemat[1]+changemat[3])],
+[250,250], // may be useful to change start point
+	      initialLdir())
+
+	var xxx = boundaryiterates[1].toReversed()
+	if (N>0){
+	for (var i=0;i<xxx.length;i++){
+	    if (xxx[i]=="r" || xxx[i]=="R"){
+		xxx[i]="L"}
+	    else if (xxx[i]=="L" || xxx[i]=="l"){
+		xxx[i]="r"}	    
+	    
+	}
+	}
+	var www = boundaryiterates[0]
+	drawcentralside(www,xxx,initialRdir())
+	redoiteration();   redopaths();
+	rescale(rescaling);
+      iteratetheboundary()
+
+	document.getElementById("ABseq").innerHTML
+	    =  ("A &#8614;"+ sigA + "<br>  B &#8614;" + sigB).replace(/,/g,"")
+	
+    }
+
+  	document.getElementById("ABseq").innerHTML
+	    =  ("A &#8614;"+ sigA + "<br>  B &#8614;" + sigB).replace(/,/g,"")
+	
+
+    var ABvals=["A","B"]
+    function otherLsystem(value){
+	 rescale(rescaling)
+  // set sigA
+	//	sigA = sigAs[value]
+	var AB = 0
+	if (value[0]=="B"){AB = 1; sigA=["B"]}
+	else { sigA=["A"]}	    
+	for (var i=1;i<value.length;i++){
+	    if (value[i]=="+")
+	    {sigA = sigA.concat(["+"]); sigA = sigA.concat([ABvals[(i+AB)%2]]);}
+	    else if (value[i]=="-")
+	    {sigA = sigA.concat(["-"]); sigA = sigA.concat([ABvals[(i+AB)%2]]);}
+	}
+	
+ sigB = invert(sigA)
+  // set listR etc
+  var cL = createleft()
+  listL = reduce(cL)
+  listR = reduce(createright())
+  listr = invertB(listL)
+  listl = invertB(listR)
+  listS = createS()
+  lists = creates()
+sortcases()
+
+ Llistl = listr
+ Llistr = listl
+ Llists = lists
+ LlistL = listR
+ LlistR = listL
+ LlistS = listS
+
+// record/display L-system for boundary
+document.getElementById("R").innerHTML=LlistR
+document.getElementById("r").innerHTML=Llistr
+document.getElementById("L").innerHTML=LlistL
+document.getElementById("l").innerHTML=Llistl
+document.getElementById("S").innerHTML=LlistS
+document.getElementById("s").innerHTML=Llists
+// display one unit examples:
+computechangevec()
+redoiteration()
+redopaths()
+boundaryiterates = ["R","L","S","r","l","s"]
+for(var i=0;i<N;i++){
+iterateB()
+}
+drawABoundary(boundaryiterates[0],"boundaryT",[250,250],initialRdir()) 
+drawABoundary(boundaryiterates[1],"boundaryT2",
+[250,250], //  may be useful to change start point
+initialLdir()) 
+
+
+/// begin extra	
+	var xxx = boundaryiterates[1].toReversed()
+	if (N>0){
+	for (var i=0;i<xxx.length;i++){
+	    if (xxx[i]=="r" || xxx[i]=="R"){
+		xxx[i]="L"}
+	    else if (xxx[i]=="L" || xxx[i]=="l"){
+		xxx[i]="r"}	    
+	    
+	}
+	}
+	var www = boundaryiterates[0]//.concat(["r"])
+	drawcentralside(www,xxx,initialRdir())
+//	drawrightside(www,xxx,initialRdir())
+/// end extra	
+	redoiteration();   redopaths();
+	rescale(rescaling);
+      iteratetheboundary()
+
+    }
+    
+
+
+
+    //
+
+    
+
+function iteratetheboundary(){
+boundaryiterates = ["R","L","S","r","l","s"]
+for(var i=0;i<N;i++){
+iterateB()
+}
+drawABoundary(boundaryiterates[0],"boundaryT",[250,250],initialRdir()) 
+drawABoundary(boundaryiterates[1],"boundaryT2",[250,250], initialLdir()) 
+    //     changemat = [changevec[0],changevec[1],-changevec[1],changevec[0]] // column matrix
+
+
+/// begin extra	
+    var xxx;
+    if (boundaryiterates[1].length>1){
+xxx	= boundaryiterates[1].toReversed()
+    }
+    else {
+	if (boundaryiterates[1]=="L"){xxx = "R";}
+	if (boundaryiterates[1]=="l"){xxx = "R";}
+	if (boundaryiterates[1]=="R"){xxx = "L";}
+	if (boundaryiterates[1]=="r"){xxx = "L";}
+	if (boundaryiterates[1]=="S"){xxx = "S";}
+	if (boundaryiterates[1]=="s"){xxx = "S";}
+    }
+    if (N>0){
+	for (var i=0;i<xxx.length;i++){
+	    if (xxx[i]=="r" || xxx[i]=="R"){
+		xxx[i]="L"}
+	    else if (xxx[i]=="L" || xxx[i]=="l"){
+		xxx[i]="r"}	    
+	    
+	}
+	}
+    	    var www = boundaryiterates[0]//.concat(["r"])
+    drawcentralside(www,xxx,initialRdir())
+
+    // draw lots of tiles:
+    	redotiles(www,xxx) 
+    // end lots of tiles
+
+/// end extra	
+}
+
+    var tilecolouroption = 0
+  function colourtiles(val){
+      tilecolouroption = val
+	if (val==0){tiles=false}
+	else{tiles=true}
+    if (val!=0){iteratetheboundary()}
+	else{
+    for (var i=1-limB;i<limB;i++){
+	for (var j=1-limB;j<limB;j++){
+	    if ((i+j)%2==0){
+		for (var k=0;k<4;k++){
+      var myElement = document.getElementById("boundarycentral"+i+"-"+j+"-"+k)
+		    myElement.setAttribute("d","") // 
+//		    document.getElementById("boundarycentral"+i+"-"+j+"-"+k).setAttribute("d","")
+		    
+		}
+	    }}}
+	}
+    }
+
+    
+    </script>
+<script>
+  
+
+  var svgframe =  document.getElementById("everything")
+  var svgframeA =  document.getElementById("everythingA")
+function changescale(){
+   var px = (1-scale)*250 // want to fix centre
+   var py = (1-scale)*250
+   var text =  scale + " 0 " + " 0 " + scale + " " + px + " "+ " " + py + " "
+   svgframe.setAttribute("transform","matrix(" + text + ")")
+  
+}
+  
+
+function matinv(M){
+  var det = M[0]*M[3] - M[1]*M[2]
+  return [M[3]/det,-M[1]/det,-M[2]/det,M[0]/det]
+}
+  
+
+  function manyfew(val){
+      manyfewcount = val
+  if (val==0){limB = 3;   }// many case, 52 = (9+4)*4 units
+else if (val==1){limB=1 // few case, just 4 = 2x2 units
+  for (var i=-2;i<3;i++){
+  for (var j=-2;j<3;j++){
+		  if (i<0 || i>=1 || j<0 || j>=1){
+		  if ((i+j)%2==0){				   
+				   for (var k=0;k<4;k++){
+       var myElement = document.getElementById("spacefillingcurve"+i+"-"+j+"-"+k)
+				       myElement.setAttribute("d","") // check
+		document.getElementById("boundarycentral"+i+"-"+j+"-"+k).setAttribute("d","")
+				  }
+      }
+    }
+  }}
+	     }
+      else {// case of just two paths; union in this case is the next tile up
+	  limB=2
+        for (var i=-2;i<3;i++){
+  for (var j=-2;j<3;j++){
+		  if (i<0 || i>=1 || j<0 || j>=1){
+		  if ((i+j)%2==0){				   
+				   for (var k=0;k<4;k++){
+       var myElement = document.getElementById("spacefillingcurve"+i+"-"+j+"-"+k)
+				       myElement.setAttribute("d","") // 
+		document.getElementById("boundarycentral"+i+"-"+j+"-"+k).setAttribute("d","")				       
+				  }
+      }
+    }
+  }}
+    }
+    redopaths() 
+}
+// >>>  
+    
+
+function endpointofcurrentpath(){
+// tried almost the same as:						   
+// function computeenddifference()
+// but didnt work because I have unfortunately confused arrays and strings due to type problem,
+// it seems that we can access every element, but sometimes commas are incuded, which we have to ignore		   
+var CP = currentpathA
+	var diff = [0,0]  // total difference
+	var ddiff = 0 // [0,0] // incremental difference per step
+	if (CP[0]=="A"){ddiff = 0} //{[1,0]}
+	else {ddiff = 1}//{[0,1]}
+        diff[0] = ddiffs[ddiff][0]
+        diff[1] = ddiffs[ddiff][1]
+	for (var i=0;i<CP.length;i++){  // only consider odd terms, for +,-
+// cant do this, becasue of commas in string
+	    if (CP[i]=="+"){
+	 	  ddiff=newplusdir[ddiff]
+	    diff[0] += ddiffs[ddiff][0]
+	    diff[1] += ddiffs[ddiff][1]
+}
+	    else if (CP[i]=="-"){
+                  ddiff=newminudir[ddiff]
+	    diff[0] += ddiffs[ddiff][0]
+	    diff[1] += ddiffs[ddiff][1]
+}
+	}
+	return diff
+}
+						   
+						   
+var rescaling = 0
+  function rescale(val){
+      rescaling = val
+if (val==0){
+   var text =  "1 0 0 1 0 0 "
+   svgframeA.setAttribute("transform","matrix(" + text + ")")
+}
+else {
+    var Mc = matinv(mymat)
+    if (sigA[0]=="B" && sigA[sigA.length-1]=="B"){
+    // in this case, I have a problem with finding the correct matrix, which seems not
+    // quite right up to sign.  So we can just laborously compute the end point of the path:
+    var endpt = endpointofcurrentpath() //
+    Mc = matinv([endpt[0],endpt[1],-endpt[1],endpt[0]])
+}
+    //(changemat)
+    var sc = 8 // scale on top of scaling; looks ok when scale=1
+   var a11 = Mc[0]*sc
+   var a12 = Mc[2]*sc
+   var a21 = Mc[1]*sc
+   var a22 = Mc[3]*sc
+   var px = -(a11+a12)*250 + 250
+   var py = -(a21+a22)*250 + 250
+    var text =  a11 + " " + a21 +  " " + a12 + " " + a22 + " " + px + " " + py + " "
+   svgframeA.setAttribute("transform","matrix(" + text + ")")
+}
+}
+
+
+      //https://css-tricks.com/value-bubbles-for-range-inputs/
+  const allRanges = document.querySelectorAll(".range-wrap");
+allRanges.forEach(wrap => {
+    const range = wrap.querySelector(".range");
+    const bubble = wrap.querySelector(".bubble");
+    const name = bubble.id
+
+  range.addEventListener("input", () => {
+    setBubble(range, bubble, name);
+  });
+  setBubble(range, bubble, name);
+});
+
+  function setBubble(range, bubble, name) {
+  const val = range.value;
+  const min = range.min ? range.min : 0;
+  const max = range.max ? range.max : 100;
+ const newVal = Number(((val - min) * 100) / (max - min));
+// https://css-tricks.com/value-bubbles-for-range-inputs/
+      bubble.style.left = `calc(${newVal}% + (${8 - newVal * 0.15}px))`;
+      if (name=="N"){N = val;
+		     bubble.innerHTML = name+": " +val;		    
+		     redoiteration();   redopaths();
+		     rescale(rescaling);
+		     iteratetheboundary()
+		    }
+      else if (name=="scale"){scale = val/100;       bubble.innerHTML = name+": " +val/100;
+      changescale() // lets just do for whole thing rather thanredo paths
+      }
+      else if (name=="width A"){linewidthA = val/100;
+		bubble.innerHTML = name+": " +val/100;
+				changewidth(0,linewidthA) 
+			       }
+      else if (name=="width B"){linewidthB = val/100;
+		bubble.innerHTML = name+": " +val/100;
+				changewidth(1,linewidthB) 
+      }      
+      else if (name=="yshift"){yshift = val/1000;}
+      else if (name=="xshift"){xshift = -val/1000;}      
+  }
+
+						   
+// layout for widescreen:
+  layout(1)						   
+
+
+  function settextbox(){
+      var newtext = sigA[0]
+      newtext +=
+	  (((""+sigA).replace(/,/g,"")).replace(/A/g,"")).replace(/B/g,"")
+     	document.getElementById("inputLsystem").value=newtext  
+  }
+  
+document.addEventListener('keydown', (event) => {
+	var name = event.key;
+        var code = event.code;
+    // lets add one to the number corresponding to a sequence of
+    // + and -, so we can look at different sequences easily
+if (N>4){N=4;
+		  document.getElementById("N").innerHTML = "N: " +4;
+		 }
+    
+    if (name=="x"){
+        // get the number of the current string:
+	var stringnum = 0
+	for (var i=0;i<(sigA.length-1)/2;i++){
+            var ii = sigA.length - 2*i-2
+	    if (sigA[ii]=="+"){
+		stringnum += Math.pow(2,i)
+	    }
+	}
+	if (stringnum<4000000){
+            newnum=(stringnum+1).toString(2)
+	    newtext = sigA[0]
+	    //	        var ABvals=["A","B"]
+            var ABc = 0
+	    if (sigA[0]=="B"){ABc=1}
+	    sigA = [sigA[0]]
+	    for (var i=0;i<newnum.length;i++){
+		if (newnum[i]=="1"){
+		    sigA = sigA.concat(["+"])
+		    newtext +="+"
+	        }
+		else {sigA = sigA.concat(["-"]);
+		      newtext +="-"}
+		sigA = sigA.concat([ABvals[(i+1+ABc)%2]])		
+	    }
+	    otherLsystem(newtext)	    
+     	document.getElementById("inputLsystem").value=newtext
+	}
+    }
+// decrease option:
+    if (name=="z"){
+        // get the number of the current string:
+	var stringnum = 0
+	for (var i=0;i<(sigA.length-1)/2;i++){
+            var ii = sigA.length - 2*i-2
+	    if (sigA[ii]=="+"){
+		stringnum += Math.pow(2,i)
+	    }
+	}
+	if (stringnum>0){
+            newnum=(stringnum-1).toString(2)
+	    newtext = sigA[0]
+	    //	        var ABvals=["A","B"]
+            var ABc = 0
+	    if (sigA[0]=="B"){ABc=1}
+	    sigA = [sigA[0]]
+	    for (var i=0;i<newnum.length;i++){
+		if (newnum[i]=="1"){
+		    sigA = sigA.concat(["+"])
+		    newtext +="+"
+	        }
+		else {sigA = sigA.concat(["-"]);
+		      newtext +="-"}
+		sigA = sigA.concat([ABvals[(i+1+ABc)%2]])		
+	    }
+	    document.getElementById("inputLsystem").value=newtext
+	    otherLsystem(newtext)
+	}
+    }
+
+    
+}
+			 )
+	 
+</script>
+
+
+  </body>
+  </html>
